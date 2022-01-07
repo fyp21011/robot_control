@@ -247,10 +247,14 @@ class MoveGroupPythonInteface(object):
         # tmp2=self.group.get_current_pose().pose
         # print("Current pose is {}.".format(tmp2))
         cur_pose = self.group.get_current_pose().pose
-        tmp_pose = np.zeros(6)
+        tmp_pose = np.zeros(7)
         tmp_pose[0] = cur_pose.position.x
         tmp_pose[1] = cur_pose.position.y
         tmp_pose[2] = cur_pose.position.z
+        tmp_pose[3] = cur_pose.orientation.x
+        tmp_pose[4] = cur_pose.orientation.y
+        tmp_pose[5] = cur_pose.orientation.z
+        tmp_pose[6] = cur_pose.orientation.w
 
         # TODO: CHECK boarder
         # if tmp_pose[2] < -0.070 + gripper_length:
@@ -539,7 +543,7 @@ class MoveGroupPythonInteface(object):
         # rospy.loginfo('add_conveyer: ' + str(ret3))
         # return (ret1 and ret2 and ret3)
     
-    def play_program(self, wait_result=True):
+    def play_program(self, wait_result=True):   
         if self.in_sim:
             return True
 
@@ -606,6 +610,7 @@ class MoveGroupPythonInteface(object):
             rospy.logerr("goal_pose should be geometry_msgs.msg.Pose/list[geometry_msgs.msg.Pose]")
             return None,None
 
+        # TODO: Figure out acceleration
         (plan, fraction) = self.group.compute_cartesian_path(waypoints, 0.01, 0.0, avoid_collisions=True)
         rospy.loginfo('plan_fraction: {}'.format(fraction))
         traj_out = None
@@ -678,14 +683,12 @@ if __name__ == '__main__':
 # ur_control.go_to_pose_goal(fall_pose)
 
 # import time
-# script=ur_control.speedl_control([-0.1, 0, 0, 0, 0, 0], 0.2, 3)
-# ur_control.script_pub.publish(script)
-# time.sleep(1)
-# script=ur_control.speedl_control([0, 0, 0, 0, 0, 0], 0.2, 3)
-# ur_control.script_pub.publish(script)
-# time.sleep(1)
-# script=ur_control.speedl_control([0.1, 0, 0, 0, 0, 0], 0.2, 3)
-# ur_control.script_pub.publish(script)
+# ur_control.speedl_control([-0.05, 0, 0, 0, 0, 0], 0.1, 3)
+# time.sleep(3)
+# ur_control.speedl_control([0, 0, 0, 0, 0, 0], 0.1, 3)
+# time.sleep(3)
+# ur_control.speedl_control([0.05, 0, 0, 0, 0, 0], 0.1, 3)
+# time.sleep(3)
 #
 # print_cur_state(ur_control)
 # a=ur_control.group.get_current_pose().pose
